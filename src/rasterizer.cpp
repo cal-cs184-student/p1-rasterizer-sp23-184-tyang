@@ -65,11 +65,6 @@ namespace CGL {
     }
   }
 
-
-  bool aboveLine(float x, float y, float dx, float dy, float Xi, float Yi) {
-    return (-(x - Xi) * dy + (y - Yi) * dx) >= 0;
-}
-
   // Rasterize a triangle.
   void RasterizerImp::rasterize_triangle(float x0, float y0,
     float x1, float y1,
