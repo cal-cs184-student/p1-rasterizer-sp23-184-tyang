@@ -101,6 +101,12 @@ namespace CGL {
     }
 
     // TODO: Task 2: Update to implement super-sampled rasterization
+    // IDEA: first, using the sampling rate, create a supersample buffer with the dimension width * height * sample_rate
+    //such that each supersample is stored in the buffer.  Then, once this is done, we will go through the process of
+    //sampling each point and including the color in the supersample buffer
+    //after going through that process, we will then downsample by taking the average of all the values in the range [x, x+sample_rate]
+    //to which we can write into our sample buffer.
+    //TODO: find out what RasterizerImp::set_framebuffer_target and void RasterizerImp::resolve_to_framebuffer() do
   }
 
 
@@ -134,8 +140,8 @@ namespace CGL {
     // TODO: Task 2: You may want to update this function for supersampling support
 
     this->sample_rate = rate;
-
-
+    //we need to create a supersample buffer in which we will store the increased dimension image
+    //increasing the sample buffer size such that it now accounts each subpixel as a pixel
     this->sample_buffer.resize(width * height, Color::White);
   }
 
