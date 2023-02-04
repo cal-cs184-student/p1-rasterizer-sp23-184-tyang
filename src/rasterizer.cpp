@@ -73,9 +73,6 @@ namespace CGL {
     // TODO: Task 1: Implement basic triangle rasterization here, no supersampling
 
     // TODO: Task 2: Update to implement super-sampled rasterization
-
-
-
   }
 
 
