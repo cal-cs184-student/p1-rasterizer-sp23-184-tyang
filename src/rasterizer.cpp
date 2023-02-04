@@ -71,6 +71,36 @@ namespace CGL {
     float x2, float y2,
     Color color) {
     // TODO: Task 1: Implement basic triangle rasterization here, no supersampling
+       
+    // Create three triangle vertices
+    Vector3D p0(x0, y0, 0);
+    Vector3D p1(x1, y1, 0);
+    Vector3D p2(x2, y2, 0);
+
+    // create lines & helper vector
+    Vector3D line0 = p0 - p1;
+    Vector3D line1 = p1 - p2;
+    Vector3D line2 = p2 - p0;
+    Vector3D z(0, 0, 1);
+
+    // create norms 
+    Vector3D n0(-line0[1], line0[0], 0);
+    Vector3D n1(-line1[1], line1[0], 0);
+    Vector3D n2(-line2[1], line2[0], 0);
+
+    // compute canvas size
+    
+    // compute bounding box sizes for optimization
+
+    // implement above line function
+    for (int x = 0; x < width; x++) {
+      for (int y = 0; y < height; y++) {
+        Vector3D p(x+.5, y+.5, 0); // current point
+        if ((dot(p - p1, n0) >= 0) && (dot(p - p2, n1) >= 0) && (dot(p - p0, n2) >= 0)) {
+          fill_pixel(x, y, color);
+        }
+      }
+    }
 
     // TODO: Task 2: Update to implement super-sampled rasterization
   }
