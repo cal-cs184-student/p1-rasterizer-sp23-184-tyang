@@ -13,6 +13,7 @@ namespace CGL {
     this->height = height;
     this->sample_rate = sample_rate;
 
+
     sample_buffer.resize(width * height * sample_rate, Color::White);
   }
 
@@ -90,15 +91,16 @@ namespace CGL {
     // compute bounding box sizes for optimization
 
     // implement above line function
-    for (int x = 0; x < width; x++) {
-      for (int y = 0; y < height; y++) {
-        Vector3D p(x+.5, y+.5, 0); // current point
-        if (((dot(p - p0, n0) >= 0) && (dot(p - p1, n1) >= 0) && (dot(p - p2, n2) >= 0))
-        || ((dot(p - p0, n0) < 0) && (dot(p - p1, n1) < 0) && (dot(p - p2, n2) < 0))) {
-          rasterize_point(x, y, color);
+    for (int x = 0; x < int(width * ::sqrt(sample_rate)); x++) {
+        for (int y = 0; y < int(height * ::sqrt(sample_rate)); y++) {
+            Vector3D p(x + .5, y + .5, 0); // current point
+            if (((dot(p - p0, n0) >= 0) && (dot(p - p1, n1) >= 0) && (dot(p - p2, n2) >= 0))
+            || ((dot(p - p0, n0) < 0) && (dot(p - p1, n1) < 0) && (dot(p - p2, n2) < 0))) {
+                rasterize_point(x, y, color);
+            }
         }
-      }
     }
+  }
 
     // TODO: Task 2: Update to implement super-sampled rasterization
     // IDEA: first, using the sampling rate, create a supersample buffer with the dimension width * height * sample_rate
@@ -107,7 +109,6 @@ namespace CGL {
     //after going through that process, we will then downsample by taking the average of all the values in the range [x, x+sample_rate]
     //to which we can write into our sample buffer.
     //TODO: find out what RasterizerImp::set_framebuffer_target and void RasterizerImp::resolve_to_framebuffer() do
-  }
 
 
   void RasterizerImp::rasterize_interpolated_color_triangle(float x0, float y0, Color c0,
@@ -142,7 +143,8 @@ namespace CGL {
     this->sample_rate = rate;
     //we need to create a supersample buffer in which we will store the increased dimension image
     //increasing the sample buffer size such that it now accounts each subpixel as a pixel
-    this->sample_buffer.resize(width * height, Color::White);
+    clear_buffers();
+    this->sample_buffer.resize(width * height * rate, Color::White);
   }
 
 
@@ -154,9 +156,9 @@ namespace CGL {
     this->width = width;
     this->height = height;
     this->rgb_framebuffer_target = rgb_framebuffer;
+    clear_buffers();
 
-
-    this->sample_buffer.resize(width * height, Color::White);
+    this->sample_buffer.resize(width * height * sample_rate, Color::White);
   }
 
 
@@ -171,22 +173,39 @@ namespace CGL {
   // for antialising, you could use this call to fill the target framebuffer
   // pixels from the supersample buffer data.
   //
+  //TODO: need to rewrite logic here such that we treat each block of sqrt(sample_rate) sqrt(sample_rate) as a block and do the arithmetic to deal with it
   void RasterizerImp::resolve_to_framebuffer() {
     // TODO: Task 2: You will likely want to update this function for supersampling support
-
-
     for (int x = 0; x < width; ++x) {
       for (int y = 0; y < height; ++y) {
-        Color col = sample_buffer[y * width + x];
-
-        for (int k = 0; k < 3; ++k) {
-          this->rgb_framebuffer_target[3 * (y * width + x) + k] = (&col.r)[k] * 255;
+          Color col = sample_buffer[y * width + x];
+          for (int k = 0; k < 3; ++k) {
+            this->rgb_framebuffer_target[3 * (y * width + x) + k] = (&col.r)[k] * 255;
         }
       }
     }
 
   }
+  //this function allows for a user, given the sample_buffer, the original image width, the start sampling position of the pixel, and the sampling rate
+  //to grab all of the information contained within the supersample square (x, y) to (x + sqrt(sampling_rate), y + sqrt(sampling_rate)
+  //and outputs it at as a color object
+  Color getAvg(int sample_rate, int start_x, int start_y, const std::vector<Color>& sample_buffer, int width) {
+      float r = 0;
+      float g= 0;
+      float b = 0;
+      int start_idx = start_y * (::sqrt(sample_rate) * width) + start_x;
+      for (int y = start_idx; y < start_idx + width * sample_rate; y += width + int(::sqrt(sample_rate))) {
+          for (int x = 0; x < ::sqrt(sample_rate); x++) {
+              Color col = sample_buffer[y + x];
+              r += col.r;
+              g += col.g;
+              b += col.b;
+          }
+      }
+      return {r= r/float(sample_rate), g= g/float(sample_rate), b= b/float(sample_rate)};
 
+      //first we will go ahead a
+  }
   Rasterizer::~Rasterizer() { }
 
 
