@@ -137,6 +137,7 @@ namespace CGL {
     // in preparation for posting pixels to the screen.
     virtual void resolve_to_framebuffer();
 
+    Color getAvg(int x, int y);
   };
 
 
