@@ -139,9 +139,56 @@ namespace CGL {
   {
     // TODO: Task 4: Rasterize the triangle, calculating barycentric coordinates and using them to interpolate vertex colors across the triangle
     // Hint: You can reuse code from rasterize_triangle
+      Vector3D p0(x0, y0, 0);
+      Vector3D p1(x1, y1, 0);
+      Vector3D p2(x2, y2, 0);
 
+      // create lines
+      Vector3D line0 = p1 - p0;
+      Vector3D line1 = p2 - p1;
+      Vector3D line2 = p0 - p2;
 
+      // create norms
+      Vector3D n0(-line0[1], line0[0], 0);
+      Vector3D n1(-line1[1], line1[0], 0);
+      Vector3D n2(-line2[1], line2[0], 0);
 
+      // compute bounding box sizes for optimization
+
+      // implement above line function
+      int sample_rate_root = sqrt(sample_rate);
+      for (int x = 0; x < int(width); x++) {
+          for (int y = 0; y < int(height); y++) {
+              int index = 0;
+              Vector3D p(x, y, 0);
+              // compute x, y coordinates based on sampling rate
+              for (float i = 0.5; i < sample_rate_root; i++) {
+                  p.x = float(x) + i / sample_rate_root;
+                  for (float j = 0.5; j < sample_rate_root; j++) {
+                      p.y = float(y) + j / sample_rate_root;
+                      if (((dot(p - p0, n0) >= 0) && (dot(p - p1, n1) >= 0) && (dot(p - p2, n2) >= 0))
+                          || ((dot(p - p0, n0) < 0) && (dot(p - p1, n1) < 0) && (dot(p - p2, n2) < 0))) {
+                          Color newColor = interpolateColor(x0, y0, c0, x1, y1, c1, x2, y2, c2, p.x, p.y);
+                          fill_sample_buffer(x, y, index, newColor);
+                      }
+                      index++;
+                  }
+              }
+          }
+      }
+  }
+
+  Color RasterizerImp::interpolateColor(float xA, float yA, Color c0,
+                                       float xB, float yB, Color c1,
+                                       float xC, float yC, Color c2,
+                                       float x, float y) {
+      float alpha = (-(x - xB)*(yC-yB) + ((y -yB)*(xC-xB)))/(-(xA - xB)*(yC-yB) + ((yA -yB)*(xC-xB)));
+      float beta =  (-(x - xC)*(yA-yC) + ((y -yC)*(xA-xC)))/(-(xB - xC)*(yA-yC) + ((yB -yC)*(xA-xC)));
+      float gamma = 1 - alpha - beta;
+      float r = alpha * c0.r + beta * c1.r + gamma * c2.r;
+      float g = alpha * c0.g + beta * c1.g + gamma * c2.g;
+      float b = alpha * c0.b + beta * c1.b + gamma * c2.b;
+      return {r, g, b};
   }
 
 
