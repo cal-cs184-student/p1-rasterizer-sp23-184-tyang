@@ -96,7 +96,7 @@ namespace CGL {
             Vector3D p(x + .5, y + .5, 0); // current point
             if (((dot(p - p0, n0) >= 0) && (dot(p - p1, n1) >= 0) && (dot(p - p2, n2) >= 0))
             || ((dot(p - p0, n0) < 0) && (dot(p - p1, n1) < 0) && (dot(p - p2, n2) < 0))) {
-                rasterize_point(x, y, color);
+                fill_pixel(x, y, color);
             }
         }
     }
@@ -143,7 +143,6 @@ namespace CGL {
     this->sample_rate = rate;
     //we need to create a supersample buffer in which we will store the increased dimension image
     //increasing the sample buffer size such that it now accounts each subpixel as a pixel
-    clear_buffers();
     this->sample_buffer.resize(width * height * rate, Color::White);
   }
 
@@ -156,7 +155,6 @@ namespace CGL {
     this->width = width;
     this->height = height;
     this->rgb_framebuffer_target = rgb_framebuffer;
-    clear_buffers();
 
     this->sample_buffer.resize(width * height * sample_rate, Color::White);
   }
@@ -193,6 +191,7 @@ namespace CGL {
                   this->rgb_framebuffer_target[3 * (buff_y * width + buff_x) + k] = (&col.r)[k] * 255;
               }
               buff_y += 1;
+
           }
           buff_y = 0;
           buff_x += 1;
