@@ -105,8 +105,8 @@ namespace CGL {
 
     // implement above line function
     int sample_rate_root = sqrt(sample_rate);
-    for (int x = 0; x < int(width * sample_rate_root); x++) {
-      for (int y = 0; y < int(height * sample_rate_root); y++) {
+    for (int x = 0; x < int(width); x++) {
+      for (int y = 0; y < int(height); y++) {
         int index = 0;
         Vector3D p(x, y, 0);
         // compute x, y coordinates based on sampling rate
