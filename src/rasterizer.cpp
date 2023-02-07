@@ -23,8 +23,16 @@ namespace CGL {
     // NOTE: You are not required to implement proper supersampling for points and lines
     // It is sufficient to use the same color for all supersamples of a pixel for points and lines (not triangles)
 
+    //original implementation
+    //sample_buffer[y * width + x] = c;
+    for (int k = 0; k < 3; ++k) {
+      this->rgb_framebuffer_target[3 * (y * width + x) + k] = (&c.r)[k] * 255;
+    }
+  }
 
-    sample_buffer[y * width + x] = c;
+  // helper function to add a buffer layer for supersamples
+  void RasterizerImp::fill_sample_buffer(size_t x, size_t y, size_t index, Color c) {
+    sample_buffer[sample_rate * (y * width + x) + index] = c;
   }
 
   // Rasterize a point: simple example to help you start familiarizing
@@ -39,7 +47,9 @@ namespace CGL {
     if (sx < 0 || sx >= width) return;
     if (sy < 0 || sy >= height) return;
 
-    fill_pixel(sx, sy, color);
+    for (int index = 0; index < sample_rate; index++) {
+      fill_sample_buffer(sx, sy, index, color);
+    }
     return;
   }
 
@@ -91,14 +101,24 @@ namespace CGL {
     // compute bounding box sizes for optimization
 
     // implement above line function
-    for (int x = 0; x < int(width * ::sqrt(sample_rate)); x++) {
-        for (int y = 0; y < int(height * ::sqrt(sample_rate)); y++) {
-            Vector3D p(x + .5, y + .5, 0); // current point
-            if (((dot(p - p0, n0) >= 0) && (dot(p - p1, n1) >= 0) && (dot(p - p2, n2) >= 0))
+    int sample_rate_root = sqrt(sample_rate);
+    for (int x = 0; x < int(width * sample_rate_root); x++) {
+      for (int y = 0; y < int(height * sample_rate_root); y++) {
+        int index = 0;
+        Vector3D p(x, y, 0);
+        // compute x, y coordinates based on sampling rate
+        for (float i = 0.5; i < sample_rate_root; i++) {
+          p.x = float(x) + i / sample_rate_root;
+          for (float j = 0.5; j < sample_rate_root; j++) {
+            p.y = float(y) + j / sample_rate_root;
+            if (((dot(p - p0, n0) >= 0) && (dot(p - p1, n1) >= 0) && (dot(p - p2, n2) >= 0)) 
             || ((dot(p - p0, n0) < 0) && (dot(p - p1, n1) < 0) && (dot(p - p2, n2) < 0))) {
-                fill_pixel(x, y, color);
+              fill_sample_buffer(x, y, index, color);
             }
+            index++;
+          }
         }
+      }
     }
   }
 
@@ -173,7 +193,8 @@ namespace CGL {
   //
   //TODO: need to rewrite logic here such that we treat each block of sqrt(sample_rate) sqrt(sample_rate) as a block and do the arithmetic to deal with it
   void RasterizerImp::resolve_to_framebuffer() {
-     //TODO: Task 2: You will likely want to update this function for supersampling support
+    //TODO: Task 2: You will likely want to update this function for supersampling support
+    //original implementation before task 2
     //for (int x = 0; x < width; ++x) {
     //      for (int y = 0; y < height; ++y) {
     //          Color col = sample_buffer[y * width + x];
@@ -182,35 +203,29 @@ namespace CGL {
     //        }
     //      }
     //    }
-    int buff_x = 0;
-    int buff_y = 0;
-    for (int x = 0; x < int(::sqrt(sample_rate) * int(width)); x+= int(::sqrt(sample_rate))) {
-          for (int y = 0; y < int(::sqrt(sample_rate)*int(height)); y+= int(::sqrt(sample_rate))) {
-              Color col = getAvg(x,y);
-              for (int k = 0; k < 3; ++k) {
-                  this->rgb_framebuffer_target[3 * (buff_y * width + buff_x) + k] = (&col.r)[k] * 255;
-              }
-              buff_y += 1;
-
-          }
-          buff_y = 0;
-          buff_x += 1;
+    for (int x = 0; x < width; ++x) {
+      for (int y = 0; y < height; ++y) {
+        Color col = getAvg(x,y);
+        fill_pixel(x, y, col);
       }
+    }
   }
+
+  //helper function to compute average color based on sampling
   Color RasterizerImp::getAvg(int start_x, int start_y) {
         float r = 0;
-        float g= 0;
+        float g = 0;
         float b = 0;
-        int start_idx = start_y * (::sqrt(sample_rate) * int(width)) + start_x;
-        for (int y = start_idx; y < start_idx + width * sample_rate; y += int(width) + int(::sqrt(sample_rate))) {
-            for (int x = 0; x < ::sqrt(sample_rate); x++) {
-                Color col = sample_buffer[y + x];
-                r += col.r;
-                g += col.g;
-                b += col.b;
-            }
+        Color temp_color = {r, g, b};
+        for (int index = 0; index < sample_rate; index++) {
+          temp_color += sample_buffer[sample_rate * (start_y * width + start_x) + index];
         }
-        return {r= r/float(sample_rate), g= g/float(sample_rate), b= b/float(sample_rate)};
+
+        temp_color.r /= sample_rate;
+        temp_color.g /= sample_rate;
+        temp_color.b /= sample_rate;
+
+        return temp_color;
     }
     //this function allows for a user, given the sample_buffer, the original image width, the start sampling position of the pixel, and the sampling rate
     //to grab all of the information contained within the supersample square (x, y) to (x + sqrt(sampling_rate), y + sqrt(sampling_rate)
