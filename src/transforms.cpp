@@ -28,10 +28,10 @@ Matrix3x3 scale(float sx, float sy) {
 // The input argument is in degrees counterclockwise
 Matrix3x3 rotate(float deg) {
 	// Part 3: Fill this in.
-    float rad = radians(deg)
+    float rad = radians(deg);
 
 
-	return Matrix3x3(cos(rad)), -sin(rad), 0, sin(rad), cos(rad), 0, 0, 0, 1);
+	return Matrix3x3(cos(rad), -sin(rad), 0, sin(rad), cos(rad), 0, 0, 0, 1);
 }
 
 }
