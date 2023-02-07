@@ -86,10 +86,9 @@ namespace CGL {
     // Create three triangle vertices
     //TODO: shift the vertices of the triangle to align with the scaled supersample pixel
     //TODO: if we shift the points within the vector from (x,y) to (x + (sqrt(sampling_rate) - 1)/2, y + (sqrt(sampling_rate) - 1)/2)
-    auto shiftConstant = float((::sqrt(sample_rate) - 1)/2);
-    Vector3D p0(x0 + shiftConstant, y0 + shiftConstant, 0);
-    Vector3D p1(x1 + shiftConstant, y1 + shiftConstant, 0);
-    Vector3D p2(x2 + shiftConstant, y2 + shiftConstant, 0);
+    Vector3D p0(x0, y0, 0);
+    Vector3D p1(x1, y1, 0);
+    Vector3D p2(x2, y2, 0);
 
     // create lines
     Vector3D line0 = p1 - p0;
