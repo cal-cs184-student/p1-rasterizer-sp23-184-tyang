@@ -124,6 +124,8 @@ namespace CGL {
     // Fill a pixel, which may contain multiple samples
     void fill_pixel(size_t x, size_t y, Color c);
 
+    void fill_sample_buffer(size_t x, size_t y, size_t s, Color c);
+
     // This function sets the framebuffer target.  The block of memory
     // for the framebuffer contains 3 * width * height values for an RGB
     // pixel framebuffer with 8-bits per color channel.
@@ -137,6 +139,7 @@ namespace CGL {
     // in preparation for posting pixels to the screen.
     virtual void resolve_to_framebuffer();
 
+    Color getAvg(int x, int y);
   };
 
 
