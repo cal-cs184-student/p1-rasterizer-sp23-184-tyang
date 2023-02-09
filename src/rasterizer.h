@@ -140,6 +140,11 @@ namespace CGL {
     virtual void resolve_to_framebuffer();
 
     Color getAvg(int x, int y);
+
+      static Color
+      interpolateColor(float x0, float y0, Color c0, float x1, float y1, Color c1, float x2, float y2, Color c2,
+                       float x,
+                       float y);
   };
 
 
