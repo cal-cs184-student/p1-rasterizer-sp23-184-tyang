@@ -215,10 +215,6 @@ namespace CGL {
 //      4. Sample the pixel at that location in the texel space and write into the sample buffer that pixel
     // TODO: Task 6: Set the correct barycentric differentials in the SampleParams struct.
     // Hint: You can reuse code from rasterize_triangle/rasterize_interpolated_color_triangle
-
-
-
-
   }
 
   void RasterizerImp::set_sample_rate(unsigned int rate) {
@@ -273,6 +269,7 @@ namespace CGL {
         fill_pixel(x, y, col);
       }
     }
+    cout << "Completed resolving to framebuffer";
   }
 
   //helper function to compute average color based on sampling

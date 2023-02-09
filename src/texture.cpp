@@ -8,9 +8,14 @@ namespace CGL {
 
   Color Texture::sample(const SampleParams& sp) {
     // TODO: Task 6: Fill this in.
+    Color t;
     if (sp.psm == P_NEAREST) {
-        Color t = sample_nearest()
+        t = sample_nearest(sp.p_uv);
     }
+    else {
+        t = sample_bilinear(sp.p_uv);
+    }
+    return t;
 
 // return magenta for invalid level
     return Color(1, 0, 1);
