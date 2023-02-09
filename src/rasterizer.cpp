@@ -182,8 +182,8 @@ namespace CGL {
       Matrix3x3 xyToUV = uvMatrix * xyMatrix.inv();
 
       //basic matrix implementation
-      Matrix3x3 Mat(x0, x1, x2, y0, y1, y2, 1, 1, 1);
-      Matrix3x3 M = Mat.inv();
+      Matrix3x3 M(x0, x1, x2, y0, y1, y2, 1, 1, 1);
+      M = M.inv();
       Vector3D u = Vector3D(u0, u1, u2);
       Vector3D v = Vector3D(v0, v1, v2);
 
@@ -192,13 +192,13 @@ namespace CGL {
       for (int x = 0; x < int(width); x++) {
           for (int y = 0; y < int(height); y++) {
               int index = 0;
-              Vector3D p(x, y, 0);
+              Vector3D p(x, y, 1);
               // compute x, y coordinates based on sampling rate
               for (float i = 0.5; i < sample_rate_root; i++) {
                   p.x = float(x) + i / sample_rate_root;
                   for (float j = 0.5; j < sample_rate_root; j++) {
                       p.y = float(y) + j / sample_rate_root;
-                      if (((dot(p - p0, n0) >= 0) && (dot(p - p1, n1) >= 0) && (dot(p - p2, n2) >= 0))
+                      if (((dot(p - p0, n0) >= 0) && (dot(p - p1, n1) >= 0) && (dot(p - p2, n2) >= 0)) 
                       || ((dot(p - p0, n0) < 0) && (dot(p - p1, n1) < 0) && (dot(p - p2, n2) < 0))) { 
                         Vector3D uvPt = M * p;
                         Vector3D uv_dx = M * (p + Vector3D(1, 0, 0));
