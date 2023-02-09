@@ -30,8 +30,12 @@ namespace CGL {
 
   Color Texture::sample_nearest(Vector2D uv, int level) {
     // TODO: Task 5: Fill this in.
-    // return magenta for invalid level
-    return Color(1, 0, 1);
+    level = 0;
+    auto& mip = mipmap[level];
+    int tx = int(uv.x * (mip.width-1));
+    int ty = int(uv.y * (mip.height-1));
+    Color tex = mip.get_texel(tx, ty);
+    return tex;
   }
 
   Color Texture::sample_bilinear(Vector2D uv, int level) {
