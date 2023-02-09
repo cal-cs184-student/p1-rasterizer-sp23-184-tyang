@@ -30,7 +30,9 @@ namespace CGL {
     // TODO: Task 5: Fill this in.
     level = 0;
     auto& mip = mipmap[level];
-    Color tex = mip.get_texel(int(uv.x), int(uv.y));
+    int tx = int(uv.x * (mip.width-1));
+    int ty = int(uv.y * (mip.height-1));
+    Color tex = mip.get_texel(tx, ty);
     return tex;
 
 
