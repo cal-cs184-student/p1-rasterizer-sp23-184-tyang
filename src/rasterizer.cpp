@@ -152,7 +152,8 @@ namespace CGL {
   {
       //create the SampleParams struct
       SampleParams sp;
-      sp.lsm = lsm;    sp.psm = psm;
+      sp.lsm = lsm;    
+      sp.psm = psm;
 
       Vector3D p0(x0, y0, 0);
       Vector3D p1(x1, y1, 0);
@@ -180,6 +181,11 @@ namespace CGL {
       Matrix3x3 uvMatrix(uvVec1.x, uvVec1.y, 0, uvVec2.x, uvVec2.y, 0, uvOrigin.x, uvOrigin.y, 1);
       Matrix3x3 xyToUV = uvMatrix * xyMatrix.inv();
 
+      //basic matrix implementation
+      Matrix3x3 Mat(x0, x1, x2, y0, y1, y2, 1, 1, 1);
+      Matrix3x3 M = Mat.inv();
+      Vector3D u = Vector3D(u0, u1, u2);
+      Vector3D v = Vector3D(v0, v1, v2);
 
       // implement above line function
       int sample_rate_root = sqrt(sample_rate);
@@ -193,13 +199,21 @@ namespace CGL {
                   for (float j = 0.5; j < sample_rate_root; j++) {
                       p.y = float(y) + j / sample_rate_root;
                       if (((dot(p - p0, n0) >= 0) && (dot(p - p1, n1) >= 0) && (dot(p - p2, n2) >= 0))
-                          || ((dot(p - p0, n0) < 0) && (dot(p - p1, n1) < 0) && (dot(p - p2, n2) < 0))) {
-                          p.z = 1;
-                          Vector3D uvPt = xyToUV * p;
-                          sp.p_uv = Vector2D(uvPt.x, uvPt.y).unit();
-                          Color color = tex.sample(sp);
-                          fill_sample_buffer(x, y, index, color);
-                          p.z = 0;
+                      || ((dot(p - p0, n0) < 0) && (dot(p - p1, n1) < 0) && (dot(p - p2, n2) < 0))) { 
+                        Vector3D uvPt = M * p;
+                        Vector3D uv_dx = M * (p + Vector3D(1, 0, 0));
+                        Vector3D uv_dy = M * (p + Vector3D(0, 1, 0));
+
+                        Vector2D p_uv = Vector2D(dot(uvPt, u), dot(uvPt, v));
+                        Vector2D p_uv_dx = Vector2D(dot(uv_dx, u), dot(uv_dx, v));
+                        Vector2D p_uv_dy = Vector2D(dot(uv_dy, u), dot(uv_dy, v));
+
+                        sp.p_uv = p_uv;
+                        sp.p_dx_uv = p_uv_dx - p_uv;
+                        sp.p_dy_uv = p_uv_dy - p_uv;
+                        
+                        Color color = tex.sample(sp);
+                        fill_sample_buffer(x, y, index, color);
                       }
                       index++;
                   }
