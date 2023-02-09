@@ -196,7 +196,7 @@ namespace CGL {
                           || ((dot(p - p0, n0) < 0) && (dot(p - p1, n1) < 0) && (dot(p - p2, n2) < 0))) {
                           p.z = 1;
                           Vector3D uvPt = xyToUV * p;
-                          sp.p_uv = Vector2D(uvPt.x, uvPt.y);
+                          sp.p_uv = Vector2D(uvPt.x, uvPt.y).unit();
                           Color color = tex.sample(sp);
                           fill_sample_buffer(x, y, index, color);
                           p.z = 0;
