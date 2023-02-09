@@ -150,7 +150,15 @@ namespace CGL {
     float x2, float y2, float u2, float v2,
     Texture& tex)
   {
+      tex.sample()
+      SampleParams
     // TODO: Task 5: Fill in the SampleParams struct and pass it to the tex.sample function.
+    //layout:
+//      1. Write function that computes the matrix that takes the points xn,yn and converts to u,v basis —> this can be done by writing MX = U and solving for M = UX^-1
+//          1. First set up the matrix (x,y,0,x,y,0,x,y,1) and the matrix (u,v,0,u,v,0,u,v,1) and multiply X^-1 on the RHS
+//      2. Using the matrix, convert the vector to a vector in the u,v space
+//      3. For all points within the triangle, use the calculated matrix to generate the vector corresponding to it’s location within the u,v space.
+//      4. Sample the pixel at that location in the texel space and write into the sample buffer that pixel
     // TODO: Task 6: Set the correct barycentric differentials in the SampleParams struct.
     // Hint: You can reuse code from rasterize_triangle/rasterize_interpolated_color_triangle
 
