@@ -197,13 +197,85 @@ namespace CGL {
     float x2, float y2, float u2, float v2,
     Texture& tex)
   {
+      //create the SampleParams struct
+      SampleParams sp;
+      sp.lsm = lsm;    
+      sp.psm = psm;
+
+      Vector3D p0(x0, y0, 0);
+      Vector3D p1(x1, y1, 0);
+      Vector3D p2(x2, y2, 0);
+
+      // create lines
+      Vector3D line0 = p1 - p0;
+      Vector3D line1 = p2 - p1;
+      Vector3D line2 = p0 - p2;
+
+      // create norms
+      Vector3D n0(-line0[1], line0[0], 0);
+      Vector3D n1(-line1[1], line1[0], 0);
+      Vector3D n2(-line2[1], line2[0], 0);
+
+      //generate the new vectors and point to be used for the matrix
+      Vector3D xyVec1 = p0 - p1;
+      Vector3D xyVec2 = p2 - p1;
+      //creating the vectors in origin
+      Vector3D uvVec1(u0 - u1, v0 - v1, 0);
+      Vector3D uvVec2(u2 - u1, v2 - v1, 0);
+      Vector3D uvOrigin(u1, v1, 1);
+      //create the matrix:
+      Matrix3x3 xyMatrix(xyVec1.x, xyVec1.y, 0, xyVec2.x, xyVec2.y, 0, p1.x, p1.y, 1);
+      Matrix3x3 uvMatrix(uvVec1.x, uvVec1.y, 0, uvVec2.x, uvVec2.y, 0, uvOrigin.x, uvOrigin.y, 1);
+      Matrix3x3 xyToUV = uvMatrix * xyMatrix.inv();
+
+      //basic matrix implementation
+      Matrix3x3 M(x0, x1, x2, y0, y1, y2, 1, 1, 1);
+      M = M.inv();
+      Vector3D u = Vector3D(u0, u1, u2);
+      Vector3D v = Vector3D(v0, v1, v2);
+
+      // implement above line function
+      int sample_rate_root = sqrt(sample_rate);
+      for (int x = 0; x < int(width); x++) {
+          for (int y = 0; y < int(height); y++) {
+              int index = 0;
+              Vector3D p(x, y, 1);
+              // compute x, y coordinates based on sampling rate
+              for (float i = 0.5; i < sample_rate_root; i++) {
+                  p.x = float(x) + i / sample_rate_root;
+                  for (float j = 0.5; j < sample_rate_root; j++) {
+                      p.y = float(y) + j / sample_rate_root;
+                      if (((dot(p - p0, n0) >= 0) && (dot(p - p1, n1) >= 0) && (dot(p - p2, n2) >= 0)) 
+                      || ((dot(p - p0, n0) < 0) && (dot(p - p1, n1) < 0) && (dot(p - p2, n2) < 0))) { 
+                        Vector3D uvPt = M * p;
+                        Vector3D uv_dx = M * (p + Vector3D(1, 0, 0));
+                        Vector3D uv_dy = M * (p + Vector3D(0, 1, 0));
+
+                        Vector2D p_uv = Vector2D(dot(uvPt, u), dot(uvPt, v));
+                        Vector2D p_uv_dx = Vector2D(dot(uv_dx, u), dot(uv_dx, v));
+                        Vector2D p_uv_dy = Vector2D(dot(uv_dy, u), dot(uv_dy, v));
+
+                        sp.p_uv = p_uv;
+                        sp.p_dx_uv = p_uv_dx - p_uv;
+                        sp.p_dy_uv = p_uv_dy - p_uv;
+                        
+                        Color color = tex.sample(sp);
+                        fill_sample_buffer(x, y, index, color);
+                      }
+                      index++;
+                  }
+              }
+          }
+      }
     // TODO: Task 5: Fill in the SampleParams struct and pass it to the tex.sample function.
+    //layout:
+//      1. Write function that computes the matrix that takes the points xn,yn and converts to u,v basis —> this can be done by writing MX = U and solving for M = UX^-1
+//          1. First set up the matrix (x,y,0,x,y,0,x,y,1) and the matrix (u,v,0,u,v,0,u,v,1) and multiply X^-1 on the RHS
+//      2. Using the matrix, convert the vector to a vector in the u,v space
+//      3. For all points within the triangle, use the calculated matrix to generate the vector corresponding to it’s location within the u,v space.
+//      4. Sample the pixel at that location in the texel space and write into the sample buffer that pixel
     // TODO: Task 6: Set the correct barycentric differentials in the SampleParams struct.
     // Hint: You can reuse code from rasterize_triangle/rasterize_interpolated_color_triangle
-
-
-
-
   }
 
   void RasterizerImp::set_sample_rate(unsigned int rate) {
@@ -258,6 +330,7 @@ namespace CGL {
         fill_pixel(x, y, col);
       }
     }
+    cout << "Completed resolving to framebuffer";
   }
 
   //helper function to compute average color based on sampling
