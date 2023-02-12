@@ -10,69 +10,38 @@ namespace CGL {
     // TODO: Task 6: Fill this in.
     Color tex;
     float level = get_level(sp);
-    // case for L_NEAREST
-//      switch (sp.lsm) {
-//          case L_ZERO:
-//              if (sp.psm == P_NEAREST) {
-//                  tex = sample_nearest(sp.p_uv, 0);
-//              }
-//              else {
-//                  tex = sample_bilinear(sp.p_uv, 0);
-//              }
-//              break;
-//          case L_NEAREST:
-//              if (sp.psm == P_NEAREST) {
-//                  tex = sample_nearest(sp.p_uv, int(level));
-//              }
-//              else {
-//                  tex = sample_bilinear(sp.p_uv, int(level));
-//              }
-//              break;
-//          case L_LINEAR:
-//              Color tex2;
-//              int adj_level = (level + 1 < mipmap.size()) ? int(level + 1) : int(level);
-//              if (sp.psm == P_NEAREST) {
-//                  tex = sample_nearest(sp.p_uv, int(level));
-//                  tex2 = sample_nearest(sp.p_uv, int(adj_level));
-//              }
-//              else {
-//                  tex2 = sample_bilinear(sp.p_uv, int(adj_level));
-//                  tex = sample_bilinear(sp.p_uv, int(level));
-//              }
-//              tex = Color((tex.r + tex2.r)/2, (tex.g + tex2.g)/2, (tex.b + tex2.b)/2);
-//              break;
-//
-//      }
-    if (sp.lsm == L_ZERO) {
-        if (sp.psm == P_NEAREST) {
-            tex = sample_nearest(sp.p_uv, 0);
-        }
-        else {
-            tex = sample_bilinear(sp.p_uv, 0);
-        }
-    }
-    else if (sp.lsm == L_NEAREST) {
-        if (sp.psm == P_NEAREST) {
-            tex = sample_nearest(sp.p_uv, int(level));
-        }
-        else {
-            tex = sample_bilinear(sp.p_uv, int(level));
-        }
-    }
-    // case for L_LINEAR
-    else if (sp.lsm == L_LINEAR) {
-        Color tex2;
-        int adj_level = (level + 1 < mipmap.size()) ? int(level + 1) : int(level);
-        if (sp.psm == P_NEAREST) {
-            tex = sample_nearest(sp.p_uv, int(level));
-            tex2 = sample_nearest(sp.p_uv, int(adj_level));
-        }
-        else {
-            tex2 = sample_bilinear(sp.p_uv, int(adj_level));
-            tex = sample_bilinear(sp.p_uv, int(level));
-        }
-        tex = Color((tex.r + tex2.r)/2, (tex.g + tex2.g)/2, (tex.b + tex2.b)/2);
-    }
+    switch (sp.lsm) {
+        case L_ZERO:
+            if (sp.psm == P_NEAREST) {
+                tex = sample_nearest(sp.p_uv, 0);
+            }
+            else {
+                tex = sample_bilinear(sp.p_uv, 0);
+            }
+            break;
+        case L_NEAREST:
+            if (sp.psm == P_NEAREST) {
+                tex = sample_nearest(sp.p_uv, int(level));
+            }
+            else {
+                tex = sample_bilinear(sp.p_uv, int(level));
+            }
+            break;
+        case L_LINEAR:
+            Color tex2;
+            int adj_level = (level + 1 < mipmap.size()) ? int(level + 1) : int(level);
+            if (sp.psm == P_NEAREST) {
+                tex = sample_nearest(sp.p_uv, int(level));
+                tex2 = sample_nearest(sp.p_uv, int(adj_level));
+              }
+            else {
+                tex2 = sample_bilinear(sp.p_uv, int(adj_level));
+                tex = sample_bilinear(sp.p_uv, int(level));
+            }
+            tex = Color((tex.r + tex2.r)/2, (tex.g + tex2.g)/2, (tex.b + tex2.b)/2);
+            break;
+
+      }
     return tex;
 // return magenta for invalid level
   }
@@ -104,6 +73,9 @@ namespace CGL {
     if (level < 0) {
         level = 0;
     }
+    if (level >= mipmap.size()) {
+        level = mipmap.size() - 1;
+    }
     auto& mip = mipmap[level];
     int tx = int(uv.x * (mip.width-1));
     int ty = int(uv.y * (mip.height-1));
@@ -115,6 +87,9 @@ namespace CGL {
     // TODO: Task 5: Fill this in.
       if (level < 0) {
           level = 0;
+      }
+      if (level >= mipmap.size()) {
+          level = mipmap.size() - 1;
       }
     auto& mip = mipmap[level];
 
