@@ -11,21 +11,33 @@ namespace CGL {
     Color tex;
     float level = get_level(sp);
     // case for L_NEAREST
-    if (sp.psm == P_NEAREST) {
-        tex = sample_nearest(sp.p_uv, int(level));
+    if (sp.lsm == L_ZERO) {
+        if (sp.psm == P_NEAREST) {
+            tex = sample_nearest(sp.p_uv, 0);
+        }
+        else {
+            tex = sample_bilinear(sp.p_uv, 0);
+        }
     }
-    else {
-        tex = sample_bilinear(sp.p_uv, int(level));
+    else if (sp.lsm == L_NEAREST) {
+        if (sp.psm == P_NEAREST) {
+            tex = sample_nearest(sp.p_uv, int(level));
+        }
+        else {
+            tex = sample_bilinear(sp.p_uv, int(level));
+        }
     }
     // case for L_LINEAR
-    if (sp.lsm == L_LINEAR) {
+    else if (sp.lsm == L_LINEAR) {
         Color tex2;
         int adj_level = (level + 1 < mipmap.size()) ? int(level + 1) : int(level);
         if (sp.psm == P_NEAREST) {
+            tex = sample_nearest(sp.p_uv, int(level));
             tex2 = sample_nearest(sp.p_uv, int(adj_level));
         }
         else {
             tex2 = sample_bilinear(sp.p_uv, int(adj_level));
+            tex = sample_bilinear(sp.p_uv, int(level));
         }
         tex = Color((tex.r + tex2.r)/2, (tex.g + tex2.g)/2, (tex.b + tex2.b)/2);
     }
@@ -46,6 +58,7 @@ namespace CGL {
     float dv_dy = sp.p_dy_uv.y;
     float L = max(::sqrt(::pow(du_dx, 2) + ::pow(dv_dx, 2)), ::sqrt(::pow(du_dy, 2) + ::pow(dv_dy, 2)));
     float level = ::log2(L);
+    cout << "level: " << level;
     return level;
   }
 
