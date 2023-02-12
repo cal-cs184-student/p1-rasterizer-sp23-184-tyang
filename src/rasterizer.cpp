@@ -100,12 +100,16 @@ namespace CGL {
     Vector3D n1(-line1[1], line1[0], 0);
     Vector3D n2(-line2[1], line2[0], 0);
 
-    // compute bounding box sizes for optimization
+    // compute bounding box size
+    int minX = floor(min({x0, x1, x2}));
+    int maxX = ceil(max({x0,x1,x2}));
+    int minY = floor(min({y0,y1,y2}));
+    int maxY = ceil(max({y0,y1,y2}));
 
     // implement above line function
     int sample_rate_root = sqrt(sample_rate);
-    for (int x = 0; x < int(width); x++) {
-      for (int y = 0; y < int(height); y++) {
+    for (int x = minX; x < maxX; x++) {
+      for (int y = minY; y < maxY; y++) {
         int index = 0;
         Vector3D p(x, y, 0);
         // compute x, y coordinates based on sampling rate
@@ -154,11 +158,15 @@ namespace CGL {
       Vector3D n2(-line2[1], line2[0], 0);
 
       // compute bounding box sizes for optimization
+      int minX = floor(min({x0, x1, x2}));
+      int maxX = ceil(max({x0,x1,x2}));
+      int minY = floor(min({y0,y1,y2}));
+      int maxY = ceil(max({y0,y1,y2}));
 
       // implement above line function
       int sample_rate_root = sqrt(sample_rate);
-      for (int x = 0; x < int(width); x++) {
-          for (int y = 0; y < int(height); y++) {
+      for (int x = minX; x < maxX; x++) {
+          for (int y = minY; y < maxY; y++) {
               int index = 0;
               Vector3D p(x, y, 0);
               // compute x, y coordinates based on sampling rate
@@ -235,9 +243,14 @@ namespace CGL {
       Vector3D v = Vector3D(v0, v1, v2);
 
       // implement above line function
+      int minX = floor(min({x0, x1, x2}));
+      int maxX = ceil(max({x0,x1,x2}));
+      int minY = floor(min({y0,y1,y2}));
+      int maxY = ceil(max({y0,y1,y2}));
+
       int sample_rate_root = sqrt(sample_rate);
-      for (int x = 0; x < int(width); x++) {
-          for (int y = 0; y < int(height); y++) {
+      for (int x = minX; x < maxX; x++) {
+          for (int y = minY; y < maxY; y++) {
               int index = 0;
               Vector3D p(x, y, 1);
               // compute x, y coordinates based on sampling rate
