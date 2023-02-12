@@ -330,7 +330,7 @@ namespace CGL {
         fill_pixel(x, y, col);
       }
     }
-    cout << "Completed resolving to framebuffer\n";
+    //cout << "Completed resolving to framebuffer\n";
   }
 
   //helper function to compute average color based on sampling

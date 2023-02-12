@@ -10,12 +10,14 @@ namespace CGL {
     // TODO: Task 6: Fill this in.
     Color tex;
     float level = get_level(sp);
+    // case for L_NEAREST
     if (sp.psm == P_NEAREST) {
         tex = sample_nearest(sp.p_uv, int(level));
     }
     else {
         tex = sample_bilinear(sp.p_uv, int(level));
     }
+    // case for L_LINEAR
     if (sp.lsm == L_LINEAR) {
         Color tex2;
         int adj_level = (level + 1 < mipmap.size()) ? int(level + 1) : int(level);
@@ -33,9 +35,11 @@ namespace CGL {
 
   float Texture::get_level(const SampleParams& sp) {
     // TODO: Task 6: Fill this in.
+    //case for L_ZERO
     if (sp.lsm == L_ZERO) {
         return 0;
     }
+    //calculate level
     float du_dx = sp.p_dx_uv.x;
     float dv_dx = sp.p_dx_uv.y;
     float du_dy = sp.p_dy_uv.x;
