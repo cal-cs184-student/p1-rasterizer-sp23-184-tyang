@@ -44,8 +44,10 @@ namespace CGL {
     float dv_dx = sp.p_dx_uv.y;
     float du_dy = sp.p_dy_uv.x;
     float dv_dy = sp.p_dy_uv.y;
-    float L = max(::sqrt(::pow(du_dx, 2) + ::pow(dv_dx, 2)), ::sqrt(::pow(du_dy, 2) + ::pow(dv_dy, 2)));
-    float level = ::log2(L);
+    Vector2D x = Vector2D(du_dx * (width - 1), dv_dx * (height - 1));
+    Vector2D y = Vector2D(du_dy * (width - 1), dv_dy * (height - 1));
+    float L = max(x.norm(), y.norm());
+    float level = log2(L);
     return level;
   }
 
