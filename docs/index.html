@@ -1,116 +1,150 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
 <head>
-<style>
-  body {
-    padding: 100px;
-    width: 1000px;
-    margin: auto;
-    text-align: left;
-    font-weight: 300;
-    font-family: 'Open Sans', sans-serif;
-    color: #121212;
-  }
-  h1, h2, h3, h4 {
-    font-family: 'Source Sans Pro', sans-serif;
-  }
-</style>
-<title>CS 184 Rasterizer</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro" rel="stylesheet">
+  <style>
+    body {
+      padding: 100px;
+      width: 1000px;
+      margin: auto;
+      text-align: left;
+      font-weight: 300;
+      font-family: 'Open Sans', sans-serif;
+      color: #121212;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      font-family: 'Source Sans Pro', sans-serif;
+    }
+  </style>
+  <title>CS 184 Rasterizer</title>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro" rel="stylesheet">
 </head>
 
 
 <body>
 
-<h1 align="middle">CS 184: Computer Graphics and Imaging, Spring 2018</h1>
-<h1 align="middle">Project 1: Rasterizer</h1>
-<h2 align="middle">Tyler Yang, Vincent Wu, CS184-tyang</h2>
+  <h1 align="middle">CS 184: Computer Graphics and Imaging, Spring 2018</h1>
+  <h1 align="middle">Project 1: Rasterizer</h1>
+  <h2 align="middle">Tyler Yang, Vincent Wu, CS184-tyang</h2>
 
-<br><br>
+  <br><br>
 
-<div>
+  <div>
 
-<h2 align="middle">Overview</h2>
-<p>Give a high-level overview of what you implemented in this project. Think about what you've built as a whole. Share your thoughts on what interesting things you've learned from completing the project.</p>
+    <h2 align="middle">Overview</h2>
+    <p>Give a high-level overview of what you implemented in this project. Think about what you've built as a whole.
+      Share your thoughts on what interesting things you've learned from completing the project.</p>
 
-<h2 align="middle">Section I: Rasterization</h2>
+    <h2 align="middle">Section I: Rasterization</h2>
 
-<h3 align="middle">Part 1: Rasterizing single-color triangles</h3>
-  <p>Triangles are rasterized using the three line test.  Given that a triangle is composed of three intersecting lines, we can check to see whether a point lies within the triangle by checking whether the point’s dot product with the orthogonal vectors of every edge is greater than or equal 0.  The rationale behind this approach is that, if a point lies within the boundary, it’s dot product with the vector orthogonal to the edge should be greater than 0 or equal to 0 (being 0 if the point lies directly on the border).  In the case that that the dot product is negative, it lies outside, the dot product will be negative.  For each point within our sample space, we will sample the point (x,y) at the center of the pixel (x+0.5, y+0.5) and take the color present at this location and store it in the sample buffer calling fill_pixel.  The resolve_to_framebuffer function will then be called, writing in the color at the sample_buffer location into the framebuffer.</p>
-  <p>We prove that the sampling is at least as efficient as sampling from the boundary as follows:</p>
-  <p style="margin-left: 25px;">Let x<sub>0</sub> = min(x coord of triangle vertices), y<sub>0</sub> = min(y coord of triangle vertices),   x<sub>1</sub> = max(x coord of triangle vertices), y<sub>1</sub> = max(y coord of triangle vertices)
-    In order to prevent looping through extraneous points that would not be considered by the triangle, we only sample in the space occupied in the rectangle created from the vertices (x<sub>0</sub>, y<sub>0</sub>),  (x<sub>0</sub>, y<sub>1</sub>),  (x<sub>1</sub>, <sub>0</sub>),  (x<sub>1</sub>, y<sub>1</sub>).  This is, by definition, the bounding box of the triangle and hence is no worse than an algorithm that checks each sample in the bounding box of the triangle.</p>
-  <div align="middle">
-    <table style="width=100%">
+    <h3 align="middle">Part 1: Rasterizing single-color triangles</h3>
+    <p>Triangles are rasterized using the three line test. Given that a triangle is composed of three intersecting
+      lines, we can check to see whether a point lies within the triangle by checking whether the point's dot product
+      with the orthogonal vectors of every edge is greater than or equal 0. The rationale behind this approach is that,
+      if a point lies within the boundary, it's dot product with the vector orthogonal to the edge should be greater
+      than 0 or equal to 0 (being 0 if the point lies directly on the border). In the case that that the dot product is
+      negative, it lies outside, the dot product will be negative. For each point within our sample space, we will
+      sample the point (x,y) at the center of the pixel (x+0.5, y+0.5) and take the color present at this location and
+      store it in the sample buffer calling fill_pixel. The resolve_to_framebuffer function will then be called, writing
+      in the color at the sample_buffer location into the framebuffer.</p>
+    <p>We prove that the sampling is at least as efficient as sampling from the boundary as follows:</p>
+    <p style="margin-left: 25px;">Let x<sub>0</sub> = min(x coord of triangle vertices), y<sub>0</sub> = min(y coord of
+      triangle vertices), x<sub>1</sub> = max(x coord of triangle vertices), y<sub>1</sub> = max(y coord of triangle
+      vertices)
+      In order to prevent looping through extraneous points that would not be considered by the triangle, we only sample
+      in the space occupied in the rectangle created from the vertices (x<sub>0</sub>, y<sub>0</sub>), (x<sub>0</sub>,
+      y<sub>1</sub>), (x<sub>1</sub>, <sub>0</sub>), (x<sub>1</sub>, y<sub>1</sub>). This is, by definition, the
+      bounding box of the triangle and hence is no worse than an algorithm that checks each sample in the bounding box
+      of the triangle.</p>
+    <div align="middle">
+      <img src="images/task1.png" align="middle" width="400px" />
+      <figcaption align="middle">test4.svg with default viewing parameters.</figcaption>
+    </div>
+    <!--<div align="middle">-->
+    <!--  <table style="width=100%">-->
+    <!--    <tr>-->
+    <!--      <td>-->
+    <!--        <img src="images/image1.png" align="middle" width="400px"/>-->
+    <!--        <figcaption align="middle">Caption goes here.</figcaption>-->
+    <!--      </td>-->
+    <!--      <td>-->
+    <!--        <img src="images/image2.png" align="middle" width="400px"/>-->
+    <!--        <figcaption align="middle">Caption goes here.</figcaption>-->
+    <!--      </td>-->
+    <!--    </tr>-->
+    <!--    <br>-->
+    <!--    <tr>-->
+    <!--      <td>-->
+    <!--        <img src="images/image3.png" align="middle" width="400px"/>-->
+    <!--        <figcaption align="middle">Caption goes here.</figcaption>-->
+    <!--      </td>-->
+    <!--      <td>-->
+    <!--        <img src="images/image4.png" align="middle" width="400px"/>-->
+    <!--        <figcaption align="middle">Caption goes here.</figcaption>-->
+    <!--      </td>-->
+    <!--    </tr>-->
+    <!--  </table>-->
+    <!--</div>-->
+
+
+    <h3 align="middle">Part 2: Antialiasing triangles</h3>
+    <p>The supersampling algorithm derived works by scaling up our sample buffer to now accommodate space for each of
+      the supersamples that are taken, sampling each supersample associated with that pixel and storing them within the
+      sample buffer, and finally averaging the RGB all of the sample_rate supersamples taken to generate the new pixel
+      to be inserted into the framebuffer. The largest changes existed within rasterize_triangle.In rasterize_triangle,
+      the inner workings were changed such that for each pixel location (x,y) we traverse in stepsizes of x +
+      0.5/sqrt(sample_rate) and y + 0.5/sqrt(sample_rate) to acquire a total of sample_rate supersamples to which we
+      will store in the sample buffer. Simplified steps are presented below:</p>
+    <ol>
+      <li>Scale up sample buffer to now be width * height * sample_rate</li>
+      <li>Iterate through each point within the bounding box to see whether a point is within the triangle</li>
+      <ol>
+        <li>We will now have two more loops with step sizes of 0.5/sqrt(sample_rate) to add incrementally to the x and y
+          values for this pixel</li>
+        <li>Each supersample will then be stored in sample buffer at the location <strong>sample_rate * (y * width + x)
+            + index</strong> where sample_rate is the sample rate, x,y being the pixel location, width being the width,
+          and index being the current supersample for this pixel in the range [0, sample_rate - 1]</li>
+      </ol>
+      <li>
+        In resolve_to_framebuffer, we will then call get_avg() to average all of the RGB values across the sample_rate
+        supersamples associated with that pixel to create the new color to be inserted into the frame buffer
+      </li>
+    </ol>
+    <p>Supersampling is useful for antialiasing images. If only one sample is taken per pixel, the result would have
+      “jaggies”, leading to poorly rasterized images. With supersampling, we are able to eliminate jaggies caused when
+      colors are not directly present in the sampled location but still present within the pixel. Supersampling allows
+      for one to remove “jaggies” and other artifacts that come from low sample-rate images.</p>
+    <p>Since there are now multiple samples associated with the pixel being inserted into the frame buffer, the
+      rasterization pipeline needed to be modified as there is no longer a 1:1 relationship between the sample buffer
+      and frame buffer. In resolve_to_framebuffer, instead of writing directly from the sample_buffer into the
+      frame_buffer, we aggregate the associated supersample entries and generate the new color to be entered into the
+      frame buffer. This entry will have RGB values associated with the average RGB values across all supersample
+      entries.</p>
+    <p>Supersampling was used to antialias triangles by averaging the supersampled RGB values. By rendering a higher
+      resolution image, we are able to get more information about the image which can then be used when downsampling the
+      image. By having more information we can represent the color values of pixels more easily and remove artifacts
+      such as jaggies.</p>
+    <table style="width: 100%">
       <tr>
         <td>
-          <img src="images/task1.png" align="middle" width="400px"/>
-          <figcaption align="middle">test4.svg with default viewing parameters.</figcaption>
+          <img src="images/task2_1.png" align="middle" width="300px" />
+          <figcaption align="middle">sample rate = 1</figcaption>
+        </td>
+        <td>
+          <img src="images/task2_4.png" align="middle" width="300px" />
+          <figcaption align="middle">sample rate = 4</figcaption>
+        </td>
+        <td>
+          <img src="images/task2_16.png" align="middle" width="300px" />
+          <figcaption align="middle">sample rate = 16</figcaption>
         </td>
       </tr>
     </table>
-  </div>
-<!--<div align="middle">-->
-<!--  <table style="width=100%">-->
-<!--    <tr>-->
-<!--      <td>-->
-<!--        <img src="images/image1.png" align="middle" width="400px"/>-->
-<!--        <figcaption align="middle">Caption goes here.</figcaption>-->
-<!--      </td>-->
-<!--      <td>-->
-<!--        <img src="images/image2.png" align="middle" width="400px"/>-->
-<!--        <figcaption align="middle">Caption goes here.</figcaption>-->
-<!--      </td>-->
-<!--    </tr>-->
-<!--    <br>-->
-<!--    <tr>-->
-<!--      <td>-->
-<!--        <img src="images/image3.png" align="middle" width="400px"/>-->
-<!--        <figcaption align="middle">Caption goes here.</figcaption>-->
-<!--      </td>-->
-<!--      <td>-->
-<!--        <img src="images/image4.png" align="middle" width="400px"/>-->
-<!--        <figcaption align="middle">Caption goes here.</figcaption>-->
-<!--      </td>-->
-<!--    </tr>-->
-<!--  </table>-->
-<!--</div>-->
-
-
-<h3 align="middle">Part 2: Antialiasing triangles</h3>
-<p>The supersampling algorithm derived works by scaling up our sample buffer to now accommodate space for each of the supersamples that are taken, sampling each supersample associated with that pixel and storing them within the sample buffer, and finally averaging the RGB all of the sample_rate supersamples taken to generate the new pixel to be inserted into the framebuffer.  The largest changes existed within rasterize_triangle.In rasterize_triangle, the inner workings were changed such that for each pixel location (x,y) we traverse in stepsizes of x + 0.5/sqrt(sample_rate) and y + 0.5/sqrt(sample_rate) to acquire a total of sample_rate supersamples to which we will store in the sample buffer.  Simplified steps are presented below:</p>
-<ol>
-  <li>Scale up sample buffer to now be width * height * sample_rate</li>
-  <li>Iterate through each point within the bounding box to see whether a point is within the triangle</li>
-  <ol>
-    <li>We will now have two more loops with step sizes of 0.5/sqrt(sample_rate) to add incrementally to the x and y values for this pixel</li>
-    <li>Each supersample will then be stored in sample buffer at the location <strong>sample_rate * (y * width + x) + index</strong> where sample_rate is the sample rate, x,y being the pixel location, width being the width, and index being the current supersample for this pixel in the range [0, sample_rate - 1]</li>
-  </ol>
-  <li>
-    In resolve_to_framebuffer, we will then call get_avg() to average all of the RGB values across the sample_rate supersamples associated with that pixel to create the new color to be inserted into the frame buffer
-  </li>
-</ol>
-  <p>Supersampling is useful for antialiasing images.  If only one sample is taken per pixel, the result would have “jaggies”, leading to poorly rasterized images.  With supersampling, we are able to eliminate jaggies caused when colors are not directly present in the sampled location but still present within the pixel.  Supersampling allows for one to remove “jaggies” and other artifacts that come from low sample-rate images.</p>
-  <p>ince there are now multiple samples associated with the pixel being inserted into the frame buffer,  the rasterization pipeline needed to be modified as there is no longer a 1:1 relationship between the sample buffer and frame buffer.  In resolve_to_framebuffer, instead of writing directly from the sample_buffer into the frame_buffer, we aggregate the associated supersample entries and generate the new color to be entered into the frame buffer.  This entry will have RGB values associated with the average RGB values across all supersample entries.</p>
-  <p>Supersampling was used to antialias triangles by averaging the supersampled RGB values.  By rendering a higher resolution image, we are able to get more information about the image which can then be used when downsampling the image.  By having more information we can represent the color values of pixels more easily and remove artifacts such as jaggies.</p>
-  <table style="width=100%">
-    <tr>
-      <td>
-        <img src="images/task2_1.png" align="middle" width="300px"/>
-        <figcaption align="middle">sample rate = 1</figcaption>
-      </td>
-      <td>
-        <img src="images/task2_4.png" align="middle" width="300px"/>
-        <figcaption align="middle">sample rate = 4</figcaption>
-      </td>
-      <td>
-        <img src="images/task2_16.png" align="middle" width="300px"/>
-        <figcaption align="middle">sample rate = 16</figcaption>
-      </td>
-    </tr>
-  </table>
-  <p>The results are observed due to the location of the edge within the pixel.  With a sample rate of 1, if the edge does not reach the point being sampled, it will not show up in the image.  This leads to the jaggie pattern seen in the first image.  As we increase the sampling rate, we are able to get more information as to the location of the edges within the triangle and therefore able to more accurately color the pixels.  As the sampling rate increases, we are able to generate more accurate representations due to more sampling points per pixel.</p>
 <h3 align="middle">Part 3: Transforms</h3>
 <p>With my new transformations, I was attempting to recreate Usain Bolt’s iconic victory pose after winning several gold medals in olympic events in the 100m and 200m.  To do so, I need to perform several transforms, such as rotating the left arm, taking advantage of the hierarchical transformations, as well as creating the joint bends in the right arm and both legs.  This was performed through a rotation and translation action to align the rotated segments with the upper arm and upper leg.</p>
   <div align="middle">
@@ -119,23 +153,74 @@
   </table>
   </div>
 
-
 <h2 align="middle">Section II: Sampling</h2>
 
 <h3 align="middle">Part 4: Barycentric coordinates</h3>
+  <p>Barycentric coordinates are a way to express a point within a triangle as a proportion of the vertices that make
+    up the triangle. Each point can be represented as a weighted sum of each of the x and y values of the vertices. In
+    the image shown, we can see how this idea can be visualized with color interpolation. Points close to the vertices
+    are very similar in hue to the vertices they are neighboring but as they come closer with other vertices, the
+    color shifts, representing the shifting of impact from the different vertices.
+  </p>
+  <div align="middle">
+    <table style="width: 100%">
+      <tr>
+        <td>
+          <img src="images/color_interpolated_triangle.png" align="middle" width="300px"/>
+          <figcaption align="middle">A color interpolated triangle representing how the points within the triangle can be represented as a weighted sum of the vertices</figcaption>
+        </td>
+        <td>
+          <img src="images/screenshot_2-14_12-21-0.png" align="middle" width="300px"/>
+          <figcaption align="middle">The .png generated from task 7 with default view settings</figcaption>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+    <h3 align="middle">Part 5: "Pixel sampling" for texture mapping</h3>
+    <p>Pixel sampling is used in texture mapping where we select a single texel to represent each pixel in the rendered
+      image. This can be a simpler and faster approach than level sampling. We implemented pixel sampling using both
+      nearest and bilinear sampling methods. Nearest sampling involves selecting the texel that is closest to the center
+      of the pixel being rendered. Bilinear sampling, on the other hand, takes into account the color values of the four
+      closest texels to the center of the pixel and interpolates between them to determine the final color value of the
+      pixel. This can result in smoother and more accurate color transitions, but is more computationally expensive.
+    </p>
+    <div align="middle">
+      <img src="images/task5.png" align="middle" width="70%" />
+      <figcaption align="middle">Comparison of different psm under different sample_rate</figcaption>
+    </div>
+    <p>As shown, bilinear sampling produces better quality images with less jagged look induced by nearest. However, the
+      difference between the sampling methods becomes less obvious when sampling at a higher rate, 16.
+    </p>
 
 
-<h3 align="middle">Part 5: "Pixel sampling" for texture mapping</h3>
+    <h3 align="middle">Part 6: "Level sampling" with mipmaps for texture mapping</h3>
+    <p>Level sampling is used to improve the efficiency and quality of texture mapping, and it allows the renderer to
+      choose the appropriate level of detail for each pixel. During rendering, the renderer checks the size and distance
+      of each pixel to determine which level of the mipmap to use for that pixel. Pixels that are far away or small on
+      the screen use lower levels of the mipmap, while pixels that are close or large on the screen use higher levels.
+      In terms of implementation in task 6, we first calculate the approximate level using the map's Jacobian. Vector
+      norms of the Jacobian, specifically, are used to produce the local pixel footprint in the texture space. Then,
+      during rendering, the renderer can choose the appropriate interpolation methods such as bilinear interpolation or
+      trilinear interpolation to blend between adjacent levels.
+      Pixel sampling is the fastest and most memory-efficient method, but can result in visible aliasing artifacts.
+      Level sampling provides improved antialiasing and reduced aliasing artifacts, but requires more memory and
+      computation time. Finally, increasing the number of samples per pixel can provide the highest level of
+      antialiasing, but at the cost of increased memory usage and rendering time.
+    </p>
+    <div align="middle">
+      <img src="images/task6.png" align="middle" width="70%" />
+      <figcaption align="middle">Comparison of different lsm with different psm</figcaption>
+    </div>
+    <p>As shown in the above figures, using L_NEAREST (nearest neighbor level sampling) yields significant image render
+      quality improvements via antialiasing.
+    </p>
 
 
-<h3 align="middle">Part 6: "Level sampling" with mipmaps for texture mapping</h3>
+    <h2 align="middle">Section III: Art Competition</h2>
+    <p>If you are not participating in the optional art competition, don't worry about this section!</p>
 
-
-
-<h2 align="middle">Section III: Art Competition</h2>
-<p>If you are not participating in the optional art competition, don't worry about this section!</p>
-
-<h3 align="middle">Part 7: Draw something interesting!</h3>
-
+    <h3 align="middle">Part 7: Draw something interesting!</h3>
 </body>
+
 </html>
