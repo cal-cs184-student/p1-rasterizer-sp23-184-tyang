@@ -68,31 +68,6 @@
       <img src="images/task1.png" align="middle" width="400px" />
       <figcaption align="middle">test4.svg with default viewing parameters.</figcaption>
     </div>
-    <!--<div align="middle">-->
-    <!--  <table style="width=100%">-->
-    <!--    <tr>-->
-    <!--      <td>-->
-    <!--        <img src="images/image1.png" align="middle" width="400px"/>-->
-    <!--        <figcaption align="middle">Caption goes here.</figcaption>-->
-    <!--      </td>-->
-    <!--      <td>-->
-    <!--        <img src="images/image2.png" align="middle" width="400px"/>-->
-    <!--        <figcaption align="middle">Caption goes here.</figcaption>-->
-    <!--      </td>-->
-    <!--    </tr>-->
-    <!--    <br>-->
-    <!--    <tr>-->
-    <!--      <td>-->
-    <!--        <img src="images/image3.png" align="middle" width="400px"/>-->
-    <!--        <figcaption align="middle">Caption goes here.</figcaption>-->
-    <!--      </td>-->
-    <!--      <td>-->
-    <!--        <img src="images/image4.png" align="middle" width="400px"/>-->
-    <!--        <figcaption align="middle">Caption goes here.</figcaption>-->
-    <!--      </td>-->
-    <!--    </tr>-->
-    <!--  </table>-->
-    <!--</div>-->
 
 
     <h3 align="middle">Part 2: Antialiasing triangles</h3>
@@ -148,7 +123,6 @@
         </td>
       </tr>
     </table>
-<<<<<<< HEAD
 <h3 align="middle">Part 3: Transforms</h3>
 <p>With my new transformations, I was attempting to recreate Usain Bolt’s iconic victory pose after winning several gold medals in olympic events in the 100m and 200m.  To do so, I need to perform several transforms, such as rotating the left arm, taking advantage of the hierarchical transformations, as well as creating the joint bends in the right arm and both legs.  This was performed through a rotation and translation action to align the rotated segments with the upper arm and upper leg.</p>
   <div align="middle">
@@ -179,7 +153,7 @@
         </td>
       </tr>
     </table>
-    
+
 
     <h3 align="middle">Part 5: "Pixel sampling" for texture mapping</h3>
     <p>Pixel sampling is used in texture mapping where we select a single texel to represent each pixel in the rendered
@@ -213,8 +187,29 @@
       antialiasing, but at the cost of increased memory usage and rendering time.
     </p>
     <div align="middle">
-      <img src="images/task6.png" align="middle" width="70%" />
-      <figcaption align="middle">Comparison of different lsm with different psm</figcaption>
+      <table style="width=100%">
+        <tr>
+          <td>
+            <img src="images/l_zero_p_nearest.png" align="middle" width="400px"/>
+            <figcaption align="middle">level zero, nearest pixel</figcaption>
+          </td>
+          <td>
+            <img src="images/l_zero_p_linear.png" align="middle" width="400px"/>
+            <figcaption align="middle">level zero, linear interpolation</figcaption>
+          </td>
+        </tr>
+        <br>
+        <tr>
+          <td>
+            <img src="images/l_nearest_p_nearest.png" align="middle" width="400px"/>
+            <figcaption align="middle">nearest level, nearest pixel</figcaption>
+          </td>
+          <td>
+            <img src="images/l_nearest_p_linear.png" align="middle" width="400px"/>
+            <figcaption align="middle">nearest level, linear interpolation</figcaption>
+          </td>
+        </tr>
+      </table>
     </div>
     <p>As shown in the above figures, using L_NEAREST (nearest neighbor level sampling) yields significant image render
       quality improvements via antialiasing.
