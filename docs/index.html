@@ -37,8 +37,11 @@
   <div>
 
     <h2 align="middle">Overview</h2>
-    <p>Give a high-level overview of what you implemented in this project. Think about what you've built as a whole.
-      Share your thoughts on what interesting things you've learned from completing the project.</p>
+    <p>In this project, we designed a simple rasterizer, which included several advanced features such as triangle
+      rendering, supersampling, Barycentric Coordinate Interpolation, and texture mapping along with anti-aliasing.
+      These advanced methods help improve the render quality of the images and the results are documented in this
+      write-up.
+    </p>
 
     <h2 align="middle">Section I: Rasterization</h2>
 
@@ -176,10 +179,19 @@
       are very similar in hue to the vertices they are neighboring but as they come closer with other vertices, the
       color shifts, representing the shifting of impact from the different vertices.
     </p>
-    <div align="middle">
-      <img src="images/task4.png" align="middle" width="300px" />
-      <figcaption align="middle">screenshot of svg/basic/test7.svg</figcaption>
-    </div>
+
+    <table style="width: 100%">
+      <tr>
+        <td>
+          <img src="images/color_interpolated_triangle.png" align="middle" width="100%" />
+          <figcaption align="middle">A single triangle colored using barycentric coordinates.</figcaption>
+        </td>
+        <td>
+          <img src="images/task4.png" align="middle" width="100%" />
+          <figcaption align="middle">screenshot of svg/basic/test7.svg</figcaption>
+        </td>
+      </tr>
+    </table>
 
 
     <h3 align="middle">Part 5: "Pixel sampling" for texture mapping</h3>
