@@ -37,8 +37,11 @@
   <div>
 
     <h2 align="middle">Overview</h2>
-    <p>Give a high-level overview of what you implemented in this project. Think about what you've built as a whole.
-      Share your thoughts on what interesting things you've learned from completing the project.</p>
+    <p>In this project, we designed a simple rasterizer, which included several advanced features such as triangle
+      rendering, supersampling, Barycentric Coordinate Interpolation, and texture mapping along with anti-aliasing.
+      These advanced methods help improve the render quality of the images and the results are documented in this
+      write-up.
+    </p>
 
     <h2 align="middle">Section I: Rasterization</h2>
 
@@ -145,6 +148,7 @@
         </td>
       </tr>
     </table>
+<<<<<<< HEAD
 <h3 align="middle">Part 3: Transforms</h3>
 <p>With my new transformations, I was attempting to recreate Usain Bolt’s iconic victory pose after winning several gold medals in olympic events in the 100m and 200m.  To do so, I need to perform several transforms, such as rotating the left arm, taking advantage of the hierarchical transformations, as well as creating the joint bends in the right arm and both legs.  This was performed through a rotation and translation action to align the rotated segments with the upper arm and upper leg.</p>
   <div align="middle">
@@ -153,29 +157,29 @@
   </table>
   </div>
 
-<h2 align="middle">Section II: Sampling</h2>
+    <h2 align="middle">Section II: Sampling</h2>
 
-<h3 align="middle">Part 4: Barycentric coordinates</h3>
-  <p>Barycentric coordinates are a way to express a point within a triangle as a proportion of the vertices that make
-    up the triangle. Each point can be represented as a weighted sum of each of the x and y values of the vertices. In
-    the image shown, we can see how this idea can be visualized with color interpolation. Points close to the vertices
-    are very similar in hue to the vertices they are neighboring but as they come closer with other vertices, the
-    color shifts, representing the shifting of impact from the different vertices.
-  </p>
-  <div align="middle">
+    <h3 align="middle">Part 4: Barycentric coordinates</h3>
+    <p>Barycentric coordinates are a way to express a point within a triangle as a proportion of the vertices that make
+      up the triangle. Each point can be represented as a weighted sum of each of the x and y values of the vertices. In
+      the image shown, we can see how this idea can be visualized with color interpolation. Points close to the vertices
+      are very similar in hue to the vertices they are neighboring but as they come closer with other vertices, the
+      color shifts, representing the shifting of impact from the different vertices.
+    </p>
+
     <table style="width: 100%">
       <tr>
         <td>
-          <img src="images/color_interpolated_triangle.png" align="middle" width="300px"/>
-          <figcaption align="middle">A color interpolated triangle representing how the points within the triangle can be represented as a weighted sum of the vertices</figcaption>
+          <img src="images/color_interpolated_triangle.png" align="middle" width="100%" />
+          <figcaption align="middle">A single triangle colored using barycentric coordinates.</figcaption>
         </td>
         <td>
-          <img src="images/screenshot_2-14_12-21-0.png" align="middle" width="300px"/>
-          <figcaption align="middle">The .png generated from task 7 with default view settings</figcaption>
+          <img src="images/task4.png" align="middle" width="100%" />
+          <figcaption align="middle">screenshot of svg/basic/test7.svg</figcaption>
         </td>
       </tr>
     </table>
-  </div>
+    
 
     <h3 align="middle">Part 5: "Pixel sampling" for texture mapping</h3>
     <p>Pixel sampling is used in texture mapping where we select a single texel to represent each pixel in the rendered
